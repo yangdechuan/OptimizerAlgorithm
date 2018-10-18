@@ -79,7 +79,7 @@ def main():
             "sgd",
             "sgd_with_momentum",
             "sgd_with_momentum_and_nesterov",
-            "agagrad",
+            "adagrad",
             "rmsprop",
             "adadelta",
             "adam"],
