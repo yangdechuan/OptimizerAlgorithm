@@ -92,10 +92,10 @@ def main():
         default=1000,
         metavar='N',
         help='input batch size for testing (default: 1000)')
-    parser.add_argument('--epochs', type=int, default=10, metavar='N',
-                        help='number of epochs to train (default: 10)')
+    parser.add_argument('--epochs', type=int, default=5, metavar='N',
+                        help='number of epochs to train (default: 5)')
     parser.add_argument('--lr', type=float, default=0.001, metavar='LR',
-                        help='learning rate (default: 0.01)')
+                        help='learning rate (default: 0.001)')
     parser.add_argument('--momentum', type=float, default=0.5, metavar='M',
                         help='SGD momentum (default: 0.5)')
     parser.add_argument('--seed', type=int, default=1, metavar='S',
@@ -108,15 +108,7 @@ def main():
         help='how many batches to wait before logging training status')
     args = parser.parse_args()
 
-    if "sgd" in args.optimizer:
-        configure(
-            os.path.join(
-                "log",
-                args.optimizer +
-                "_lr{}".format(
-                    args.lr)))
-    else:
-        configure(os.path.join("log", args.optimizer))
+    configure(os.path.join("log", args.optimizer + "_lr{}".format(args.lr)))
 
     torch.manual_seed(args.seed)
 
@@ -140,7 +132,7 @@ def main():
                                        torchvision.transforms.ToTensor(),
                                        torchvision.transforms.Normalize((0.1307,), (0.3801,))
                                    ])),
-        batch_size=args.batch_size,
+        batch_size=args.test_batch_size,
         shuffle=False,
         **kwargs
     )
@@ -161,13 +153,13 @@ def main():
             momentum=args.momentum,
             nesterov=True)
     elif args.optimizer == "adagrad":
-        optimizer = optim.Adagrad(model.parameters())
+        optimizer = optim.Adagrad(model.parameters(), lr=args.lr)
     elif args.optimizer == "rmsprop":
-        optimizer = optim.RMSprop(model.parameters())
+        optimizer = optim.RMSprop(model.parameters(), lr=args.lr)
     elif args.optimizer == "adadelta":
-        optimizer = optim.Adadelta(model.parameters())
+        optimizer = optim.Adadelta(model.parameters(), lr=args.lr)
     elif args.optimizer == "adam":
-        optimizer = optim.Adam(model.parameters())
+        optimizer = optim.Adam(model.parameters(), lr=args.lr)
     else:
         print("Error: Unknown optimizer!")
 
